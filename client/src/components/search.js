@@ -1,6 +1,15 @@
 import React, {Component} from 'react';
 import {updateArtist,updateSong,updateWord} from "../actions/index";
 import {connect} from 'react-redux';
+import axios from 'axios';
+
+const mapStateToProps = state => {
+    return {
+        word: state.word,
+        song: state.song,
+        artist: state.artist
+    }
+}
 
 function mapDispatchToProps(dispatch) {
     return {
@@ -22,6 +31,25 @@ class ConnectedMainSearch extends Component {
 
     artistChange = (e) => {
         this.props.updateArtist(e.target.value);
+    }
+
+    onSubmit = (e) => {
+        e.preventDefault();
+
+        const newQuery = {
+            word: this.props.word,
+            song: this.props.song,
+            artist: this.props.artist
+        };
+
+        axios.post('http://localhost:5000/search', {newQuery})
+            .then(res => {
+                console.log(res)
+            })
+        
+        this.props.updateSong('');
+        this.props.updateArtist('');
+        this.props.updateWord('');
     }
 
     render() {
@@ -55,13 +83,18 @@ class ConnectedMainSearch extends Component {
                         onChange={this.artistChange}
                         />
                 </div>
-                <button type='submit' className='btn btn-success'>Submit</button>
+                <button 
+                    type='submit' 
+                    className='btn btn-success'
+                    onSubmit={this.onSubmit}
+                    >Submit
+                </button>
             </form>
             </div>
         )
     }
 }
 
-const MainSearch = connect(null, mapDispatchToProps)(ConnectedMainSearch);
+const MainSearch = connect(mapStateToProps, mapDispatchToProps)(ConnectedMainSearch);
 
 export default MainSearch;
