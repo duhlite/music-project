@@ -20,6 +20,10 @@ function mapDispatchToProps(dispatch) {
 }
 
 class ConnectedMainSearch extends Component {
+    constructor(props) {
+        super(props);
+        this.onSubmit = this.onSubmit.bind(this);
+    }
 
     wordChange = (e) => {
         this.props.updateWord(e.target.value);
@@ -33,7 +37,7 @@ class ConnectedMainSearch extends Component {
         this.props.updateArtist(e.target.value);
     }
 
-    onSubmit = (e) => {
+    onSubmit(e) {
         e.preventDefault();
 
         const newQuery = {
@@ -42,9 +46,9 @@ class ConnectedMainSearch extends Component {
             artist: this.props.artist
         };
 
-        axios.post('http://localhost:5000/search', {newQuery})
+        axios.post('http://localhost:5000/search', newQuery)
             .then(res => {
-                console.log(res)
+                console.log(res);
             })
         
         this.props.updateSong('');
@@ -55,7 +59,7 @@ class ConnectedMainSearch extends Component {
     render() {
         return (
             <div>
-            <form>
+            <form onSubmit={this.onSubmit}>
                 <div className='form-group'>
                     <label>Words</label>
                     <input
@@ -83,12 +87,13 @@ class ConnectedMainSearch extends Component {
                         onChange={this.artistChange}
                         />
                 </div>
-                <button 
-                    type='submit' 
+                <div className='form-group'>
+                <input 
+                    type='submit'
+                    value="Submit" 
                     className='btn btn-success'
-                    onSubmit={this.onSubmit}
-                    >Submit
-                </button>
+                    />
+                </div>
             </form>
             </div>
         )

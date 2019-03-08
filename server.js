@@ -9,10 +9,24 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+app.get('/', (req,res)=>{
+  res.send('hi')
+})
+
 app.post('/search', (req, res) => {
-  console.log(req.body);
+  console.log(req.body.song);
+  const word = req.body.word;
+  const song = req.body.song;
+  const artist = req.body.artist;
+  axios.get('api.genius.com/search?q='+ song + ' ' + artist, {headers: {Authorization: 'Bearer DQxOTVSqe4oh2EYdnOz5bfPe1HlK4Yeod7eZ21pPpzKqBw2IIfb8BLg-ZMeuEhEF'}})
+        .then((response)=>{
+          console.log(response);
+        })
+        .catch((error)=>{
+          console.log(error);
+        })
   res.send(
-    `I received your POST request. This is what you sent me: ${req.body.post}`,
+    req.body
   );
 });
 
