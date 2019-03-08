@@ -67,6 +67,7 @@ class ConnectedMainSearch extends Component {
                         className='form-control'
                         id='wordQuery'
                         onChange={this.wordChange}
+                        value = {this.props.word}
                         />
                 </div>
                 <div className='form-group'>
@@ -76,6 +77,7 @@ class ConnectedMainSearch extends Component {
                         className='form-control'
                         id='songQuery'
                         onChange={this.songChange}
+                        value={this.props.song}
                         />
                 </div>
                 <div className='form-group'>
@@ -85,6 +87,7 @@ class ConnectedMainSearch extends Component {
                         className='form-control'
                         id='artistQuery'
                         onChange={this.artistChange}
+                        value={this.props.artist}
                         />
                 </div>
                 <div className='form-group'>
