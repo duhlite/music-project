@@ -2,7 +2,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const axios = require('axios');
 const cors = require('cors');
-const $ = require('cheerio');
+const cheerio = require('cheerio');
+const util = require('util');
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -21,12 +22,12 @@ app.post('/search', (req, res) => {
   const artist = req.body.artist;
   axios.get('https://api.genius.com/search?q='+song + ' ' + artist, {headers: {Authorization: 'Bearer DQxOTVSqe4oh2EYdnOz5bfPe1HlK4Yeod7eZ21pPpzKqBw2IIfb8BLg-ZMeuEhEF'}})
         .then((response)=>{
-          console.log(response.data.response.hits[0].result.api_path);
-          axios.get('http://www.genius.com' + response.data.response.hits[0].result.api_path)
-            .then((response) => {
-              $('.lyrics', response)
-              console.log($('.lyrics'))
+          const url = 'http://www.genius.com' + response.data.response.hits[0].result.api_path;
+          axios.get(url)
+            .then(res => {
+              return util.inspect(res)
             })
+            .then(getLyrics)
         })
         .catch((error)=>{
           console.log(error);
@@ -35,5 +36,11 @@ app.post('/search', (req, res) => {
     req.body
   );
 });
+
+function getLyrics(html) {
+  const $ = cheerio.load(html)
+  const lyrics = $('.lyrics').text()
+  console.log(lyrics.split('\\n'))
+}
 
 app.listen(port, () => console.log(`Listening on port ${port}`));
