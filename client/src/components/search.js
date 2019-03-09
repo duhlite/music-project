@@ -22,6 +22,11 @@ function mapDispatchToProps(dispatch) {
 class ConnectedMainSearch extends Component {
     constructor(props) {
         super(props);
+
+        this.state = {
+            response: ''
+        }
+
         this.onSubmit = this.onSubmit.bind(this);
     }
 
@@ -49,6 +54,10 @@ class ConnectedMainSearch extends Component {
         axios.post('http://localhost:5000/search', newQuery)
             .then(res => {
                 console.log(res);
+                this.setState({response: res.data});
+            })
+            .catch(err => {
+                console.log(err);
             })
         
         this.props.updateSong('');
@@ -98,6 +107,12 @@ class ConnectedMainSearch extends Component {
                     />
                 </div>
             </form>
+            <div>
+                <input
+                    readOnly
+                    value={this.state.response}
+                    />
+            </div>
             </div>
         )
     }

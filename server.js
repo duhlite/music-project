@@ -17,7 +17,7 @@ app.get('/', (req,res)=>{
 
 app.post('/search', (req, res) => {
   console.log(req.body);
-  const word = req.body.word;
+  var word = req.body.word;
   const song = req.body.song;
   const artist = req.body.artist;
   axios.get('https://api.genius.com/search?q='+song + ' ' + artist, {headers: {Authorization: 'Bearer DQxOTVSqe4oh2EYdnOz5bfPe1HlK4Yeod7eZ21pPpzKqBw2IIfb8BLg-ZMeuEhEF'}})
@@ -25,22 +25,25 @@ app.post('/search', (req, res) => {
           const url = 'http://www.genius.com' + response.data.response.hits[0].result.api_path;
           axios.get(url)
             .then(res => {
-              return util.inspect(res)
+              const $ = cheerio.load(res.data)
+              const lyrics = $('.lyrics').text()
+              return lyrics
             })
-            .then(getLyrics)
+            .then(function(lyrics) {
+              console.log(lyrics.split('\\n'))
+              const regex = new RegExp(word, 'i');
+              console.log(lyrics.match(regex));
+              if(lyrics.match(regex)===null) {
+                res.send('false')
+              } else {
+                res.send('true')
+              }
+            })
         })
         .catch((error)=>{
           console.log(error);
         })
-  res.send(
-    req.body
-  );
 });
 
-function getLyrics(html) {
-  const $ = cheerio.load(html)
-  const lyrics = $('.lyrics').text()
-  console.log(lyrics.split('\\n'))
-}
 
 app.listen(port, () => console.log(`Listening on port ${port}`));
