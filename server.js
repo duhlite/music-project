@@ -4,13 +4,13 @@ const axios = require('axios');
 const cors = require('cors');
 const cheerio = require('cheerio');
 const dotenv = require('dotenv');
-dotenv.load();
 const app = express();
 const port = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+dotenv.load();
 
 app.get('/', (req,res)=>{
   res.send('hi')
@@ -45,6 +45,22 @@ app.post('/search', (req, res) => {
           console.log(error);
         })
 });
+
+app.post('/login', (req,res) => {
+  const CLIENT_ID = process.env.SPOTIFY_ID;
+  const REDIRECT_URI = process.env.SPOTIFY_REDIRECT_URI;
+  const scopes = [
+    "user-modify-playback-state",
+    'user-library-read',
+    'user-library-modify',
+    'playlist-read-private',
+    'playlist-modify-public',
+    'playlist-modify-private'
+  ];
+  res.send(
+    'https://accounts.spotify.com/authorize?client_id='+CLIENT_ID+'&redirect_uri='+encodeURIComponent(REDIRECT_URI)+'&scope='+encodeURIComponent(scopes.join(' '))+'&response_type=token'
+  )
+})
 
 
 app.listen(port, () => console.log(`Listening on port ${port}`));

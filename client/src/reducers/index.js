@@ -1,9 +1,12 @@
-import { SONG_UPDATE,WORD_UPDATE,ARTIST_UPDATE } from "../constants/action-types";
+import { SONG_UPDATE,WORD_UPDATE,ARTIST_UPDATE,CLEAR_SEARCH } from "../constants/action-types";
 
 const initialState = {
     word: '',
     song: '',
-    artist: ''
+    previous_song: '',
+    artist: '',
+    previous_artist: '',
+    bank: {}
 };
 
 function rootReducer(state = initialState, action) {
@@ -22,6 +25,15 @@ function rootReducer(state = initialState, action) {
             return {
                 ...state,
                 artist: action.payload
+            }
+        case CLEAR_SEARCH:
+            return {
+                ...state,
+                previous_artist: state.artist,
+                previous_song: state.song,
+                word: '',
+                artist: '',
+                song: ''
             }
     
         default:

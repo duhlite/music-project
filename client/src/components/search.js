@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {updateArtist,updateSong,updateWord} from "../actions/index";
+import {updateArtist,updateSong,updateWord,clearSearch} from "../actions/index";
 import {connect} from 'react-redux';
 import axios from 'axios';
 
@@ -15,7 +15,8 @@ function mapDispatchToProps(dispatch) {
     return {
         updateArtist: artist => dispatch(updateArtist(artist)),
         updateSong: song => dispatch(updateSong(song)),
-        updateWord: word => dispatch(updateWord(word))
+        updateWord: word => dispatch(updateWord(word)),
+        clearSearch: clear => dispatch(clearSearch(clear))
     }
 }
 
@@ -53,16 +54,13 @@ class ConnectedMainSearch extends Component {
 
         axios.post('http://localhost:5000/search', newQuery)
             .then(res => {
-                console.log(res);
                 this.setState({response: res.data});
             })
             .catch(err => {
                 console.log(err);
             })
         
-        this.props.updateSong('');
-        this.props.updateArtist('');
-        this.props.updateWord('');
+        this.props.clearSearch('');
     }
 
     render() {
