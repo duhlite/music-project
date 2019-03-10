@@ -5,32 +5,52 @@ import axios from 'axios';
 const mapStateToProps = state => {
     return {
         artist: state.previous_artist,
-        song: state.previous_song
+        song: state.previous_song,
+        accessToken: state.accessToken
+
     }
 }
 
 class ConnectedPlaylistCreator extends Component {
     constructor(props) {
         super(props);
-
-        this.onClick = this.onClick.bind(this)
+        this.state = {
+            currentSong: '',
+            currentArtist: ''
+        }
+        this.onSubmit = this.onSubmit.bind(this)
     }
 
-    onClick = () => {
-        axios.post('http://localhost:5000/login')
+    songChange = (e) => {
+        this.setState({currentSong: e.target.value});
+    }
+
+    artistChange = (e) => {
+        this.setState({currentArtist: e.target.value});
+    }
+
+    onSubmit(e) {
+        e.preventDefault();
+
+        const newQuery = {
+            artist: this.state.currentArtist,
+            song: this.state.currentSong,
+            accessToken: this.props.accessToken
+        }
+
+        console.log(newQuery);
+        axios.post('http://localhost:5000/spotsearch',newQuery)
             .then(res => {
-                console.log(res.data);
-                window.open(res.data,'_self');
+                console.log(res.data)
             })
             .catch(err => {
-                console.log(err);
+                console.log(err)
             })
     }
 
     render() {
         return (
             <div>
-                <button onClick={this.onClick}>Log In</button>
             <form onSubmit={this.onSubmit}>
                 <div className='form-group'>
                     <label>Song Title</label>
@@ -38,7 +58,8 @@ class ConnectedPlaylistCreator extends Component {
                         type='text'
                         className='form-control'
                         id='songSearch'
-                        ref={this.input}
+                        onChange={this.songChange}
+                        value={this.state.currentSong}
                         defaultValue={this.props.song}
                         />
                 </div>
@@ -48,7 +69,8 @@ class ConnectedPlaylistCreator extends Component {
                         type='text'
                         className='form-control'
                         id='artistSearch'
-                        ref={this.input}
+                        onChange={this.artistChange}
+                        value={this.state.currentArtist}
                         defaultValue={this.props.artist}
                         />
                 </div>

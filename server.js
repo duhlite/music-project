@@ -62,5 +62,18 @@ app.post('/login', (req,res) => {
   )
 })
 
+app.post('/spotsearch', (req,res) =>{
+  const artist = req.body.artist;
+  const song = req.body.song;
+  const accessToken = req.body.accessToken;
+  axios.get('https://api.spotify.com/v1/search?q=song'+song+' artist'+artist +'&type=song',{headers: {Authorization: 'Bearer ' + accessToken}})
+        .then((res) => {
+          res.send(res.data)
+        })
+        .catch((err) => {
+          res.send(err)
+        })
+})
+
 
 app.listen(port, () => console.log(`Listening on port ${port}`));

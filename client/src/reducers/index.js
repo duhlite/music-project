@@ -1,4 +1,4 @@
-import { SONG_UPDATE,WORD_UPDATE,ARTIST_UPDATE,CLEAR_SEARCH } from "../constants/action-types";
+import { SONG_UPDATE,WORD_UPDATE,ARTIST_UPDATE,CLEAR_SEARCH,LOG_IN } from "../constants/action-types";
 
 const initialState = {
     word: '',
@@ -6,7 +6,8 @@ const initialState = {
     previous_song: '',
     artist: '',
     previous_artist: '',
-    bank: {}
+    loggedIn: false,
+    accessToken: null
 };
 
 function rootReducer(state = initialState, action) {
@@ -34,6 +35,12 @@ function rootReducer(state = initialState, action) {
                 word: '',
                 artist: '',
                 song: ''
+            }
+        case LOG_IN:
+            return {
+                ...state,
+                loggedIn: action.payload.loggedIn,
+                accessToken: action.payload.accessToken
             }
     
         default:

@@ -5,3 +5,5 @@ export const SONG_UPDATE = 'SONG_UPDATE';
 export const ARTIST_UPDATE = 'ARTIST_UPDATE';
 
 export const CLEAR_SEARCH = 'CLEAR_SEARCH';
+
+export const LOG_IN = 'LOG_IN';
