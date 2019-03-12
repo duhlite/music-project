@@ -67,13 +67,14 @@ app.post('/spotsearch', (req,res) =>{
   const artist = req.body.artist;
   const song = req.body.song;
   const accessToken = req.body.accessToken;
+  var playId;
   axios.get('https://api.spotify.com/v1/me', {headers: {'Authorization': 'Bearer ' + accessToken,
   'content-type':'application/json'}})
         .then(res => {
           axios.post('https://api.spotify.com/v1/users/'+res.data.id+'/playlists', {name:song + ' - ' + artist,public:false,description: artist + " playlist made by what's in a song"}, {headers: {'Authorization': 'Bearer ' + accessToken,
           'content-type':'application/json'}})
               .then(res => {
-                var playId = res.data.id;
+                playId = res.data.id;
               })
               .catch(err => {
                 console.log(err)
@@ -97,12 +98,11 @@ app.post('/spotsearch', (req,res) =>{
                       var playlistSongs = response.data.tracks.map(el => el.uri);
                       axios.post('https://api.spotify.com/v1/playlists/'+playId+'/tracks',{'uris':playlistSongs},{headers: {'Authorization': 'Bearer ' + accessToken,
                       'content-type':'application/json'}})
-                          .then((res) =>{
-                            axios.get('https://api.spotify.com/v1/playlists/'+playId+'/tracks',{headers: {'Authorization': 'Bearer ' + accessToken,
-                            'content-type':'application/json'}})
-                              .then((res)=>{
-                                res.send(res.data);
-                              })
+                          .then((response) =>{
+                            res.send(playId);
+                          })
+                          .catch((err)=>{
+                            res.send(err)
                           })
                     })
                     .catch((err)=>{

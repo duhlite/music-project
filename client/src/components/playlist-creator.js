@@ -16,7 +16,8 @@ class ConnectedPlaylistCreator extends Component {
         super(props);
         this.state = {
             currentSong: '',
-            currentArtist: ''
+            currentArtist: '',
+            playId: ''
         }
         this.onSubmit = this.onSubmit.bind(this)
     }
@@ -40,7 +41,7 @@ class ConnectedPlaylistCreator extends Component {
 
         axios.post('http://localhost:5000/spotsearch', newQuery)
             .then(res => {
-                console.log(res.data)
+                this.setState({playId:"https://open.spotify.com/embed/playlist/" + res.data})
             })
             .catch(err => {
                 console.log(err)
@@ -82,6 +83,9 @@ class ConnectedPlaylistCreator extends Component {
                     />
                 </div>
             </form>
+            <div>
+            <iframe title='your playlist' src={this.state.playId} width="300" height="380" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+            </div>
             </div>
         )
     }
