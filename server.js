@@ -4,6 +4,7 @@ const axios = require('axios');
 const cors = require('cors');
 const cheerio = require('cheerio');
 const dotenv = require('dotenv');
+const util = require('util');
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -66,12 +67,54 @@ app.post('/spotsearch', (req,res) =>{
   const artist = req.body.artist;
   const song = req.body.song;
   const accessToken = req.body.accessToken;
-  axios.get('https://api.spotify.com/v1/search?q=song'+song+' artist'+artist +'&type=song',{headers: {Authorization: 'Bearer ' + accessToken}})
-        .then((res) => {
-          res.send(res.data)
+  axios.get('https://api.spotify.com/v1/me', {headers: {'Authorization': 'Bearer ' + accessToken,
+  'content-type':'application/json'}})
+        .then(res => {
+          axios.post('https://api.spotify.com/v1/users/'+res.data.id+'/playlists', {name:song + ' - ' + artist,public:false,description: artist + " playlist made by what's in a song"}, {headers: {'Authorization': 'Bearer ' + accessToken,
+          'content-type':'application/json'}})
+              .then(res => {
+                var playId = res.data.id;
+              })
+              .catch(err => {
+                console.log(err)
+              })
+        })
+        .catch(err => {
+          console.log(err)
+        })
+  axios.get('https://api.spotify.com/v1/search?q=track:'+song+ ' artist:'+artist+'&type=track',{headers: {'Authorization': 'Bearer ' + accessToken,
+    'content-type':'application/json'}})
+        .then((response) => {
+          var songId = response.data.tracks.items[0].id;
+          axios.get('https://api.spotify.com/v1/audio-features/'+songId,{headers: {'Authorization': 'Bearer ' + accessToken,
+          'content-type':'application/json'}})
+              .then((response) => {
+                var dance = response.data.danceability;
+                var energy = response.data.energy;
+                axios.get('https://api.spotify.com/v1/recommendations?limit=50&market=US&seed_tracks='+songId+'&target_danceability='+dance+'&target_energy='+energy,{headers: {'Authorization': 'Bearer ' + accessToken,
+                'content-type':'application/json'}})
+                    .then((response) => {
+                      var playlistSongs = response.data.tracks.map(el => el.uri);
+                      axios.post('https://api.spotify.com/v1/playlists/'+playId+'/tracks',{'uris':playlistSongs},{headers: {'Authorization': 'Bearer ' + accessToken,
+                      'content-type':'application/json'}})
+                          .then((res) =>{
+                            axios.get('https://api.spotify.com/v1/playlists/'+playId+'/tracks',{headers: {'Authorization': 'Bearer ' + accessToken,
+                            'content-type':'application/json'}})
+                              .then((res)=>{
+                                res.send(res.data);
+                              })
+                          })
+                    })
+                    .catch((err)=>{
+                      res.send(err)
+                    })
+              })
+              .catch((err)=>{
+                res.send(util.inspect(err));
+              })
         })
         .catch((err) => {
-          res.send(err)
+          res.send(util.inspect(err))
         })
 })
 

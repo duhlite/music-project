@@ -38,14 +38,14 @@ class ConnectedPlaylistCreator extends Component {
             accessToken: this.props.accessToken
         }
 
-        console.log(newQuery);
-        axios.post('http://localhost:5000/spotsearch',newQuery)
+        axios.post('http://localhost:5000/spotsearch', newQuery)
             .then(res => {
                 console.log(res.data)
             })
             .catch(err => {
                 console.log(err)
             })
+        this.setState({currentArtist:'',currentSong:''})
     }
 
     render() {
