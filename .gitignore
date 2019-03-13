@@ -6,7 +6,6 @@
 .pnp.js
 .env
 /client/node_modules
-.gitignore
 
 # testing
 /coverage
