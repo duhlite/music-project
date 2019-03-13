@@ -6,11 +6,19 @@ import { logIn } from "./actions/index";
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Button from '@material-ui/core/Button';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import Grid from '@material-ui/core/Grid';
+import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
+import MenuIcon from '@material-ui/icons/Menu';
+import Typography from '@material-ui/core/Typography';
 import {withStyles} from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
+import deepPurple from '@material-ui/core/colors/deepPurple';
 
 import MainSearch from './components/search';
 import PlaylistCreator from './components/playlist-creator';
+
 
 const styles = {
   root: {
@@ -18,6 +26,21 @@ const styles = {
   },
   grow: {
     flexGrow: 1,
+  },
+  navbar: {
+    backgroundColor: deepPurple[500]
+  },
+  list: {
+    width: 200
+  },
+  padding: {
+    paddingRight: 30,
+    cursor: 'pointer'
+  },
+  sideBarIcon: {
+    padding: 0,
+    color: 'white',
+    cursor: 'pointer'
   }
 };
 
@@ -60,8 +83,24 @@ class ConnectedApp extends Component {
     super(props);
 
     this.onClick = this.onClick.bind(this);
+    this.state = {drawerActivate: false, drawer: false, open: false};
+    this.createDrawer = this.createDrawer.bind(this);
+    this.destroyDrawer = this.destroyDrawer.bind(this);
   }
 
+  componentWillMount() {
+    if(window.innerWidth <= 600) {
+      this.setState({drawerActivate:true});
+    }
+    window.addEventListener('resize', () => {
+      if(window.innerWidth <= 600) {
+        this.setState({drawerActivate:true});
+      }
+      else {
+        this.setState({drawerActivate:false})
+      }
+    });
+  }
 
   componentDidMount() {
     const accessToken = checkUrl();
@@ -71,20 +110,59 @@ class ConnectedApp extends Component {
   onClick = () => {
     axios.post('/login')
         .then(res => {
-            console.log(res.data);
             window.open(res.data,'_self');
         })
         .catch(err => {
             console.log(err);
         })
 }
-  render() {
-    const {classes} = this.props;
+
+  createDrawer() {
     return (
-      <Router>
-        <div className={classes.root}>
-          <AppBar position='static'>
-            <Toolbar>
+      <div>
+        <AppBar>
+          <Toolbar>
+            <Grid container direction='row' justify='space-between' alignItems='center'>
+              <MenuIcon
+                open={this.state.open}
+                className={this.props.classes.sideBarIcon}
+                onClick={()=>{this.setState({drawer:true, open: true})}} />
+              <Typography color='inherit' variant='headline'>
+              What's in a Song
+              </Typography>
+            </Grid>
+          </Toolbar>
+        </AppBar>
+
+        <SwipeableDrawer
+          open={this.state.drawer}
+          onClose={()=>{this.setState({drawer:false})}}
+          onOpen={()=>{this.setState({drawer:true})}}>
+          <div
+            tabIndex={0}
+            role='button'
+            onClick={()=>{this.setState({drawer:false})}}
+            onKeyDown={()=>{this.setState({drawer:false})}}
+          >
+            <List className={this.props.classes.list}>
+              <ListItem key={1} button divider component={Link} to='/'>
+                Main Search
+              </ListItem>
+              <ListItem key={2} button divider component={Link} to='/playlist'>
+                Playlist Creator
+              </ListItem>
+            </List>  
+          </div>  
+        </SwipeableDrawer>
+      </div>
+    );
+  }
+
+  destroyDrawer(){
+    const {classes} = this.props
+    return (
+        <AppBar position='static' className={classes.navbar} >
+            <Toolbar color='inherit'>
               <Button color='inherit' component={Link} to='/'>
                 What's in a Song
               </Button>
@@ -99,6 +177,15 @@ class ConnectedApp extends Component {
               </Button>
             </Toolbar>
           </AppBar>
+    )
+  }
+
+  render() {
+    const {classes} = this.props;
+    return (
+      <Router>
+        <div className={classes.root}>
+          {this.state.drawerActivate ? this.createDrawer() : this.destroyDrawer()}
           <br />
           <Route path = '/' exact component={MainSearch} />
           <Route path='/playlist' exact component={PlaylistCreator} />

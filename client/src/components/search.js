@@ -83,7 +83,7 @@ class ConnectedMainSearch extends Component {
         const {classes} = this.props;
         return (
             <div>
-            <form onSubmit={this.onSubmit}>
+            <form onSubmit={this.onSubmit} className={classes.container} >
                 <TextField
                     label='Word'
                     onChange={this.wordChange}
