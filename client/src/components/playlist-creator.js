@@ -1,6 +1,22 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import axios from 'axios';
+import PropTypes from 'prop-types';
+import {withStyles} from '@material-ui/core/styles';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
+
+const styles = theme => ({
+    container: {
+        display: 'flex',
+        flexWrap: 'wrap'
+    },
+    TextField: {
+        marginLeft: theme.spacing.unit,
+        marginRight: theme.spacing.unit,
+        width: 200
+    }
+})
 
 const mapStateToProps = state => {
     return {
@@ -39,7 +55,7 @@ class ConnectedPlaylistCreator extends Component {
             accessToken: this.props.accessToken
         }
 
-        axios.post('http://localhost:5000/spotsearch', newQuery)
+        axios.post('/spotsearch', newQuery)
             .then(res => {
                 this.setState({playId:"https://open.spotify.com/embed/playlist/" + res.data})
             })
@@ -50,47 +66,40 @@ class ConnectedPlaylistCreator extends Component {
     }
 
     render() {
+        const {classes} = this.props
         return (
             <div>
-            <form onSubmit={this.onSubmit}>
-                <div className='form-group'>
-                    <label>Song Title</label>
-                    <input
-                        type='text'
-                        className='form-control'
-                        id='songSearch'
-                        onChange={this.songChange}
-                        value={this.state.currentSong}
-                        defaultValue={this.props.song}
-                        />
-                </div>
-                <div className='form-group'>
-                    <label>Artist Name</label>
-                    <input
-                        type='text'
-                        className='form-control'
-                        id='artistSearch'
-                        onChange={this.artistChange}
-                        value={this.state.currentArtist}
-                        defaultValue={this.props.artist}
-                        />
-                </div>
-                <div className='form-group'>
-                <input 
-                    type='submit'
-                    value="Submit" 
-                    className='btn btn-success'
+            <form className={classes.container} onSubmit={this.onSubmit}>
+                <TextField
+                    label='Song Title'
+                    className={classes.TextField}
+                    id='songSearch'
+                    onChange={this.songChange}
+                    value={this.state.currentSong}
                     />
-                </div>
+                <TextField
+                    label='Artist Name'
+                    className={classes.TextField}
+                    id='artistSearch'
+                    onChange={this.artistChange}
+                    value={this.state.currentArtist}
+                    />
+                <Button type='submit'>
+                    Submit
+                    </Button>
             </form>
             <div>
-            <iframe title='your playlist' src={this.state.playId} width="300" height="380" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+            <iframe title='your playlist' src={this.state.playId} width="300" height="380" frameBorder="0" allowtransparency="true" allow="encrypted-media"></iframe>
             </div>
             </div>
         )
     }
 }
 
+ConnectedPlaylistCreator.propTypes = {
+    classes: PropTypes.object.isRequired
+}
+
 const PlaylistCreator = connect(mapStateToProps)(ConnectedPlaylistCreator);
 
-export default PlaylistCreator;
+export default withStyles(styles)(PlaylistCreator);

@@ -2,6 +2,22 @@ import React, {Component} from 'react';
 import {updateArtist,updateSong,updateWord,clearSearch} from "../actions/index";
 import {connect} from 'react-redux';
 import axios from 'axios';
+import PropTypes from 'prop-types';
+import {withStyles} from '@material-ui/core/styles';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
+
+const styles = theme => ({
+    container: {
+        display: 'flex',
+        flexWrap: 'wrap'
+    },
+    TextField: {
+        marginLeft: theme.spacing.unit,
+        marginRight: theme.spacing.unit,
+        width: 200
+    }
+})
 
 const mapStateToProps = state => {
     return {
@@ -52,7 +68,7 @@ class ConnectedMainSearch extends Component {
             artist: this.props.artist
         };
 
-        axios.post('http://localhost:5000/search', newQuery)
+        axios.post('/search', newQuery)
             .then(res => {
                 this.setState({response: res.data});
             })
@@ -64,46 +80,34 @@ class ConnectedMainSearch extends Component {
     }
 
     render() {
+        const {classes} = this.props;
         return (
             <div>
             <form onSubmit={this.onSubmit}>
-                <div className='form-group'>
-                    <label>Words</label>
-                    <input
-                        type='text'
-                        className='form-control'
-                        id='wordQuery'
-                        onChange={this.wordChange}
-                        value = {this.props.word}
-                        />
-                </div>
-                <div className='form-group'>
-                    <label>Song Title</label>
-                    <input
-                        type='text'
-                        className='form-control'
-                        id='songQuery'
-                        onChange={this.songChange}
-                        value={this.props.song}
-                        />
-                </div>
-                <div className='form-group'>
-                    <label>Artist Name</label>
-                    <input
-                        type='text'
-                        className='form-control'
-                        id='artistQuery'
-                        onChange={this.artistChange}
-                        value={this.props.artist}
-                        />
-                </div>
-                <div className='form-group'>
-                <input 
-                    type='submit'
-                    value="Submit" 
-                    className='btn btn-success'
+                <TextField
+                    label='Word'
+                    onChange={this.wordChange}
+                    value = {this.props.word}
+                    id='wordQuery'
+                    className={classes.TextField}
                     />
-                </div>
+                <TextField
+                    label='Song Title'
+                    onChange={this.songChange}
+                    value = {this.props.song}
+                    id='songQuery'
+                    className={classes.TextField}
+                    />
+                <TextField
+                    label='Artist Name'
+                    onChange={this.artistChange}
+                    value = {this.props.artist}
+                    id='artistQuery'
+                    className={classes.TextField}
+                    />
+                <Button type='submit'>
+                    Submit
+                </Button>
             </form>
             <div>
                 <input
@@ -116,6 +120,10 @@ class ConnectedMainSearch extends Component {
     }
 }
 
+ConnectedMainSearch.propTypes = {
+    classes: PropTypes.object.isRequired
+}
+
 const MainSearch = connect(mapStateToProps, mapDispatchToProps)(ConnectedMainSearch);
 
-export default MainSearch;
+export default withStyles(styles)(MainSearch);

@@ -1,16 +1,31 @@
 import React, { Component } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import {BrowserRouter as Router, Route, Link} from 'react-router-dom';
 import axios from 'axios';
 import {connect} from 'react-redux';
 import { logIn } from "./actions/index";
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import Button from '@material-ui/core/Button';
+import {withStyles} from '@material-ui/core/styles';
+import PropTypes from 'prop-types';
 
 import MainSearch from './components/search';
 import PlaylistCreator from './components/playlist-creator';
 
+const styles = {
+  root: {
+    flexGrow: 1,
+  },
+  grow: {
+    flexGrow: 1,
+  }
+};
+
+
 const mapStateToProps = state => {
   return {
-    loggedin: state.loggedin
+    loggedin: state.loggedin,
+    accessToken: state.accessToken
   }
 }
 
@@ -44,8 +59,9 @@ class ConnectedApp extends Component {
   constructor(props) {
     super(props);
 
-    this.onClick = this.onClick.bind(this)
+    this.onClick = this.onClick.bind(this);
   }
+
 
   componentDidMount() {
     const accessToken = checkUrl();
@@ -53,7 +69,7 @@ class ConnectedApp extends Component {
 }
 
   onClick = () => {
-    axios.post('http://localhost:5000/login')
+    axios.post('/login')
         .then(res => {
             console.log(res.data);
             window.open(res.data,'_self');
@@ -62,31 +78,27 @@ class ConnectedApp extends Component {
             console.log(err);
         })
 }
-
   render() {
+    const {classes} = this.props;
     return (
       <Router>
-        <div className='container'>
-          <nav className='navbar navbar-expand-lg navbar-dark bg-dark'>
-            <a className='navbar-brand' href='/'>What's in a Song</a>
-            <div className='collapse navbar-collapse'>
-              <ul className='navbar-nav mr-auto'>
-                <li className='navbar-item'>
-                  <Link to='/' className='nav-link'>Search</Link>
-                </li>
-                <li className='navbar-item'>
-                  <Link to='/playlist' className='nav-link'>Playlist Creator</Link>
-                </li>
-                <li className='navbar-item'>
-                <input
-                  type='button'
-                  value={this.props.loggedin ? 'Logged In':'Log In'}
-                  onClick={this.onClick}
-                  />
-                </li>
-              </ul>
-            </div>
-          </nav>
+        <div className={classes.root}>
+          <AppBar position='static'>
+            <Toolbar>
+              <Button color='inherit' component={Link} to='/'>
+                What's in a Song
+              </Button>
+              <Button color='inherit' component={Link} to='/'>
+                Search
+              </Button>
+              <Button color='inherit' component={Link} to='/playlist'>
+                Playlist Creator
+              </Button>
+              <Button color='inherit' onClick={this.onClick}>
+                  {this.props.accessToken ? 'Logged In':'Log In'}
+              </Button>
+            </Toolbar>
+          </AppBar>
           <br />
           <Route path = '/' exact component={MainSearch} />
           <Route path='/playlist' exact component={PlaylistCreator} />
@@ -96,6 +108,11 @@ class ConnectedApp extends Component {
   }
 }
 
+ConnectedApp.propTypes = {
+  classes: PropTypes.object.isRequired,
+};
+
+
 const App = connect(mapStateToProps, mapDispatchToProps)(ConnectedApp);
 
-export default App;
+export default withStyles(styles)(App);
