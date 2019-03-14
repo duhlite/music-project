@@ -14,10 +14,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 dotenv.load();
 
-app.get('/', (req,res)=>{
-  res.send('hi')
-})
-
 app.post('/search', (req, res) => {
   var word = req.body.word;
   const song = req.body.song;
