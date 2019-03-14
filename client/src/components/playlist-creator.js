@@ -10,6 +10,7 @@ import Button from '@material-ui/core/Button';
 const styles = theme => ({
     container: {
         display: 'flex',
+        flexDirection: 'column',
         flexWrap: 'wrap',
         width: '50vw',
         margin: 'auto',
@@ -38,10 +39,12 @@ const styles = theme => ({
         color: 'white'
     },
     maindiv: {
-        display: 'block'
+        display: 'flex',
+        flexDirection:'column'
     },
     AudioPlayer: {
-        border: '1px solid black'
+        margin: 'auto',
+        paddingTop: '30px'
     }
 })
 
@@ -121,7 +124,7 @@ class ConnectedPlaylistCreator extends Component {
                         Submit
                     </Button>
                 </form>
-            <div className={classes.AudioPlayer} style={{display: this.state.playId === '' ? 'none':'block'}} >
+            <div className={classes.AudioPlayer}>
             <iframe title='your playlist' src={this.state.playId} width="300" height="380" frameBorder="0" allowtransparency="true" allow="encrypted-media"></iframe>
             </div>
             </div>
