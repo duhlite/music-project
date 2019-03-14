@@ -42,7 +42,8 @@ const styles = theme => ({
         color: 'white'
     },
     maindiv: {
-        display: 'block'
+        display: 'flex',
+        flexDirection: 'column'
     },
 })
 
@@ -139,7 +140,10 @@ class ConnectedMainSearch extends Component {
                         Submit
                     </Button>
                 </form>
-                <Typography>{this.state.response}</Typography>
+                <TextField
+                    readOnly
+                    value={this.state.response}
+                    style={{margin:'auto'}}/>
             </div>
         )
     }
