@@ -46,7 +46,10 @@ app.post('/search', (req, res) => {
 
 app.post('/login', (req,res) => {
   const CLIENT_ID = process.env.SPOTIFY_ID;
-  const REDIRECT_URI = process.env.SPOTIFY_REDIRECT_URI;
+  const REDIRECT_URI = 
+      process.env.NODE.ENV === "production"
+        ? process.env.SPOTIFY_REDIRECT_PRODUCTION_URI        
+        : process.env.SPOTIFY_REDIRECT_DEVELOPMENT_URI;
   const scopes = [
     "user-modify-playback-state",
     'user-library-read',
