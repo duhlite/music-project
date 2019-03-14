@@ -8,6 +8,10 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 30px #a6db9d inset;
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;

@@ -23,15 +23,16 @@ import PlaylistCreator from './components/playlist-creator';
 const styles = {
   root: {
     flexGrow: 1,
+    backgroundColor: '#ebedf5'
   },
   grow: {
     flexGrow: 1,
   },
   navbar: {
-    backgroundColor: deepPurple[500]
+    backgroundColor: deepPurple[500],
   },
   list: {
-    width: 200
+    width: 200,
   },
   padding: {
     paddingRight: 30,
@@ -41,6 +42,19 @@ const styles = {
     padding: 0,
     color: 'white',
     cursor: 'pointer'
+  },
+  drawer: {
+    backgroundColor: "#a6db9d"
+  },
+  drawerButton: {
+    backgroundColor: deepPurple[300],
+    color: 'white',
+    border: '1px solid black',
+    marginTop: '5px'
+  },
+  footer: {
+    paddingTop: '38vh',
+    textAlign: 'center'
   }
 };
 
@@ -118,9 +132,10 @@ class ConnectedApp extends Component {
 }
 
   createDrawer() {
+    const {classes} = this.props
     return (
       <div>
-        <AppBar>
+        <AppBar className={classes.navbar} position='static'>
           <Toolbar>
             <Grid container direction='row' justify='space-between' alignItems='center'>
               <MenuIcon
@@ -137,7 +152,9 @@ class ConnectedApp extends Component {
         <SwipeableDrawer
           open={this.state.drawer}
           onClose={()=>{this.setState({drawer:false})}}
-          onOpen={()=>{this.setState({drawer:true})}}>
+          onOpen={()=>{this.setState({drawer:true})}}
+          className={classes.drawer}
+          >
           <div
             tabIndex={0}
             role='button'
@@ -145,10 +162,10 @@ class ConnectedApp extends Component {
             onKeyDown={()=>{this.setState({drawer:false})}}
           >
             <List className={this.props.classes.list}>
-              <ListItem key={1} button divider component={Link} to='/'>
+              <ListItem key={1} className={classes.drawerButton} button divider component={Link} to='/'>
                 Main Search
               </ListItem>
-              <ListItem key={2} button divider component={Link} to='/playlist'>
+              <ListItem key={2} className={classes.drawerButton} button divider component={Link} to='/playlist'>
                 Playlist Creator
               </ListItem>
             </List>  
@@ -189,6 +206,9 @@ class ConnectedApp extends Component {
           <br />
           <Route path = '/' exact component={MainSearch} />
           <Route path='/playlist' exact component={PlaylistCreator} />
+          <footer className={classes.footer}>
+            Made by Travis Mingalone
+          </footer>
         </div>
       </Router>
     );
