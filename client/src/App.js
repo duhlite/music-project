@@ -23,7 +23,7 @@ import PlaylistCreator from './components/playlist-creator';
 const styles = {
   root: {
     flexGrow: 1,
-    backgroundColor: '#ebedf5'
+    backgroundColor: '#ebedf5',
   },
   grow: {
     flexGrow: 1,

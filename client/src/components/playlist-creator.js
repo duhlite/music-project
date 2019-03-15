@@ -65,7 +65,9 @@ class ConnectedPlaylistCreator extends Component {
             currentArtist: '',
             playId: ''
         }
-        this.onSubmit = this.onSubmit.bind(this)
+        this.onSubmit = this.onSubmit.bind(this);
+        this.loggedInPlaylist = this.loggedInPlaylist.bind(this);
+        this.loggedOutPlaylist = this.loggedOutPlaylist.bind(this);
     }
 
     songChange = (e) => {
@@ -74,6 +76,16 @@ class ConnectedPlaylistCreator extends Component {
 
     artistChange = (e) => {
         this.setState({currentArtist: e.target.value});
+    }
+
+    onClick = () => {
+        axios.post('/login')
+            .then(res => {
+                window.open(res.data,'_self');
+            })
+            .catch(err => {
+                console.log(err);
+            })
     }
 
     onSubmit(e) {
@@ -95,6 +107,52 @@ class ConnectedPlaylistCreator extends Component {
         this.setState({currentArtist:'',currentSong:''})
     }
 
+    loggedOutPlaylist() {
+        const {classes} = this.props
+        return (
+            <div className={classes.container}>
+            <Typography variant='h5' className={classes.title}>
+                Please log in to Spotify to continue.
+            </Typography>
+            <Button 
+                className={classes.submitButton} 
+                variant='contained'
+                onClick={this.onClick}
+            >
+                Log In
+            </Button>
+            </div>
+        )
+    }
+
+    loggedInPlaylist() {
+        const {classes} = this.props
+        return (
+            <form className={classes.container} onSubmit={this.onSubmit}>
+                <TextField
+                    label='Song Title'
+                    className={classes.TextField}
+                    id='songSearch'
+                    onChange={this.songChange}
+                    value={this.state.currentSong}
+                    InputProps={{className:classes.textInput}}        
+                />
+                <TextField
+                    label='Artist Name'
+                    className={classes.TextField}
+                    id='artistSearch'
+                    onChange={this.artistChange}
+                    value={this.state.currentArtist}
+                    InputProps={{className:classes.textInput}}
+                    style={{marginTop:'15px'}}
+                />
+                <Button type='submit' className={classes.submitButton} variant='contained' >
+                    Submit
+                </Button>
+            </form>
+        )
+    }
+
     render() {
         const {classes} = this.props
         return (
@@ -102,28 +160,7 @@ class ConnectedPlaylistCreator extends Component {
                 <Typography variant='headline' className={classes.title} >
                     Make A Playlist
                 </Typography>
-                <form className={classes.container} onSubmit={this.onSubmit}>
-                    <TextField
-                        label='Song Title'
-                        className={classes.TextField}
-                        id='songSearch'
-                        onChange={this.songChange}
-                        value={this.state.currentSong}
-                        InputProps={{className:classes.textInput}}        
-                        />
-                    <TextField
-                        label='Artist Name'
-                        className={classes.TextField}
-                        id='artistSearch'
-                        onChange={this.artistChange}
-                        value={this.state.currentArtist}
-                        InputProps={{className:classes.textInput}}
-                        style={{marginTop:'15px'}}
-                    />
-                    <Button type='submit' className={classes.submitButton} variant='contained' >
-                        Submit
-                    </Button>
-                </form>
+                {this.props.accessToken === null ? this.loggedOutPlaylist() : this.loggedInPlaylist()}
             <div className={classes.AudioPlayer}>
             <iframe title='your playlist' src={this.state.playId} width="300" height="380" frameBorder="0" allowtransparency="true" allow="encrypted-media"></iframe>
             </div>
