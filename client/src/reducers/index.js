@@ -2,6 +2,7 @@ import { SONG_UPDATE,WORD_UPDATE,ARTIST_UPDATE,CLEAR_SEARCH,LOG_IN } from "../co
 
 const initialState = {
     word: '',
+    previous_word: '',
     song: '',
     previous_song: '',
     artist: '',
@@ -32,6 +33,7 @@ function rootReducer(state = initialState, action) {
                 ...state,
                 previous_artist: state.artist,
                 previous_song: state.song,
+                previous_word: state.word,
                 word: '',
                 artist: '',
                 song: ''

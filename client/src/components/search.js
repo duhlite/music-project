@@ -51,7 +51,9 @@ const mapStateToProps = state => {
     return {
         word: state.word,
         song: state.song,
-        artist: state.artist
+        artist: state.artist,
+        postSong: state.previous_song,
+        postWord: state.previous_word
     }
 }
 
@@ -109,6 +111,10 @@ class ConnectedMainSearch extends Component {
 
     render() {
         const {classes} = this.props;
+        const prevSong = this.props.postSong.toLowerCase()
+                .split(' ')
+                .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
+                .join(' ');
         return (
             <div className={classes.maindiv}>
                 <Typography variant='headline' className={classes.title}>
@@ -140,10 +146,15 @@ class ConnectedMainSearch extends Component {
                         Submit
                     </Button>
                 </form>
-                <TextField
-                    readOnly
-                    value={this.state.response}
-                    style={{margin:'auto'}}/>
+                <Typography variant='h5'
+                    style={{margin:'auto', paddingTop: '30px', display: this.state.response === '' ? "none" : "block"}}>
+                    Does {prevSong} contain the word "{this.props.postWord}"? 
+                </Typography>
+                <br/>
+                <Typography variant='h5'
+                    style={{margin:'auto', paddingTop: '30px', display: this.state.response === '' ? "none" : "block"}}>
+                    {this.state.response === false ? "No!" : 'Yes!'}
+                </Typography>
             </div>
         )
     }
